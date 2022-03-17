@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+
+<head>
+  <meta charset="utf-8">
+  <title></title>
+</head>
+
+<body>
+
+  {% if question_list %}
+  <ul>
+      {% for question in question_list %}
+      <li>
+          <a href="/sondage/{{question.id}}">{{question.question_text}}</a>
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>Pas de sondage disponible.</p>
+    {% endif %}
+
+</body>
+
+</html>
