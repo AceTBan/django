@@ -1,3 +1,10 @@
 from django.contrib import admin
 
-# Register your models here.
+from vote.models import Choice, Coordonnees, Elections, Personnes, Voter
+
+
+admin.site.register(Elections)
+admin.site.register(Choice)
+admin.site.register(Personnes)
+admin.site.register(Coordonnees)
+admin.site.register(Voter)

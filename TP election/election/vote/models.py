@@ -1,16 +1,23 @@
-from calendar import c
-from email.policy import default
-from secrets import choice
 from django.db import models
+from django.utils import timezone
+import datetime
 
 class Elections(models.Model):
     elections_name = models.CharField(max_length=50)
     publish_date = models.DateTimeField("date de la publication")
+    
+    def __str__(self):
+        return self.elections_name
+
+    def was_published_recently(self):
+        return self.pub_date >= timezone.now() - datetime.timedelta(days=1)
 
 class Choice(models.Model):
     elections = models.ForeignKey(Elections,on_delete=models.CASCADE)
     choice_text = models.CharField(max_length=255)
-    votes = models.ImageField(default=0)
+    votes = models.IntegerField(default=0)
+    def __str__(self):
+        return self.choice_text
 
 class Personnes(models.Model):
     nom = models.CharField(max_length=25)
