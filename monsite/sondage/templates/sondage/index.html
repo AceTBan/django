@@ -8,7 +8,16 @@
 </head>
 
 <body>
+{% block contenue %}
+  {% if not request.user.is_authenticated %}
+ <a href="{% url 'sondage:login' %}">connexion</a>
+ <a href="{% url 'sondage:register' %}">inscription</a>
+ {% else %}
+ <a href="{% url 'sondage:logout' %}">déconnexion</a>
+ <a href="{% url 'sondage:profil' %}">profil</a>
 
+ {% endif %}
+{% endblock %}
   {% if question_list %}
   <ul>
       {% for question in question_list %}

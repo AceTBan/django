@@ -1,0 +1,8 @@
+{% extends 'sondage/index.html'%}
+{% load static %}
+{% block contenue %}
+    <h1>{{request.user.username}}</h1>
+    {% if citizen.electeur == false %}
+        <a href="{% url 'sondage:become' %}">Devenir electeur</a>
+    {%endif%}
+{% endblock %}

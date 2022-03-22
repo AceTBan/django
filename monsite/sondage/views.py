@@ -2,16 +2,20 @@
 # from re import template
 # from unittest import loader
 # from urllib import response
+from multiprocessing import AuthenticationError, context
 from django.shortcuts import render, get_object_or_404
 
 # Create your views here.
 
 from django.http import HttpResponse, HttpResponseRedirect
-from .models import Question, Choice
+from .models import Citizen, Question, Choice
 # from django.template import loader
 from django.urls import reverse
 
 from django.views import generic
+
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login, logout
 
 def index(request):
     # # # return HttpResponse("Bienvenue a l'index de notre sondage")
@@ -76,3 +80,52 @@ class DetailView(generic.DetailView):
 class ResultsView(generic.DetailView):
     model = Question
     template_name = "sondage/results.html"
+
+def my_login(request):
+    return render(request,"sondage/login.html")
+
+def register(request):
+    return render(request,"sondage/register.html")
+
+def my_logout(request):
+        return render(request,"sondage/logout.html")
+
+def registered(request):
+    name = request.POST["user_name"]
+    firstname = request.POST["user_firstname"]
+    pwd = request.POST["user_pwd"]
+    email = request.POST["user_email"]
+    username= firstname[0].lower() + "." + name.lower()
+    user = User.objects.create_user(username, email, pwd)
+    citizen = Citizen(user=user)
+    user.last_name = name
+    user.first_name = firstname
+    user.save()
+    citizen.save()
+    context = {"user": user}
+    return render(request,'sondage/registered.html', context)
+
+def welcome(request):
+    username = request.POST["username"]
+    password = request.POST["password"]
+    user= authenticate(request, username=username,password=password)
+    context = {"user":user}
+    if user is not None:
+        login(request,user)
+        return render(request,"sondage/welcome.html",context)
+    else:
+        return render(request, "sondage/error_log.html")
+    
+def my_logout(request):
+    logout(request)
+    return render(request,"sondage/logout.html")
+
+def profil(request):
+    citizen = Citizen.objects.get(user=request.user)
+    context = {"citizen":citizen}
+    return render(request,"sondage/profil.html", context)
+
+def become(request):
+    request.user.citizen.electeur = True
+    request.user.citizen.save()
+    return IndexView.as_view()(request)
